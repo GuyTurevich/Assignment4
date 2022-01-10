@@ -2,10 +2,13 @@ import atexit
 import sqlite3
 
 
-class PersistenceLayer:
+class Repository:
 
     def __init__(self):
         self.connection = sqlite3.connect('database.db')
+        self.students = Hats(self.connection)
+        self.suppliers = Suppliers(self.connection)
+        self.orders = Orders(self.connection)
 
     def close(self):
         self.connection.commit()
@@ -35,6 +38,23 @@ class PersistenceLayer:
         );
         """)
 
+    def insert_hat(self, id, topping, supplier, quantity):
+        self.connection.execute("""
+        INSERT INTO hats (id, topping, supplier, quantity)
+        VALUES(?, ?, ?, ?)      
+        """, [id, topping, supplier, quantity])
 
-psl = PersistenceLayer()
-atexit.register(psl.close)
+    def insert_supplier(self, id, name):
+        self.connection.execute("""
+        INSERT INTO suppliers (id, name)
+        VALUES(?, ?)      
+        """, [id, name])
+
+    def insert_order(self, id, location, hat):
+        self.connection.execute("""
+        INSERT INTO orders (id, location, hat)
+        VALUES(?, ?, ?)      
+        """, [id, location, hat])
+
+repo = Repository()
+atexit.register(repo.close)

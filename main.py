@@ -34,7 +34,7 @@ for i in range(len(orders)):
     order = Order(i+1, location, repo.hats.get_hat_id(topping))
     repo.orders.insert(order)
     supplier = repo.suppliers.get_supplier(repo.hats.get_supplier_id(order.hat))
-    summary += topping + "," + supplier[0] + "," + location + "\n"
+    summary += topping + "," + supplier + "," + location + "\n"
     repo.hats.check_quantity(order.hat)
 
 with open('summary.txt', 'w') as file:

@@ -21,4 +21,4 @@ class Suppliers:
                 SELECT name FROM suppliers WHERE id = ?
                 """, [supplier_id])
         supplier = cursor.fetchone()
-        return supplier
+        return supplier[0]

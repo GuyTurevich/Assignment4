@@ -17,3 +17,46 @@ class Hats:
         INSERT INTO hats (id, topping, supplier, quantity)
         VALUES(?, ?, ?, ?)      
         """, [hatDTO.id, hatDTO.topping, hatDTO.supplier, hatDTO.quantity])
+
+    def get_hat_id(self, topping):
+        cursor1 = self.connection.cursor()
+        cursor1.execute("""
+        SELECT supplier FROM hats WHERE topping = ?
+        """, [topping])
+        suppliers_list = cursor1.fetchall()
+        suppliers_list.sort()
+        supplier = suppliers_list[0][0]
+
+        cursor2 = self.connection.cursor()
+        cursor2.execute("""
+                SELECT id FROM hats WHERE supplier = ? AND topping = ?
+                """, [supplier, topping])
+        available_id = cursor2.fetchone()[0]
+
+        self.connection.execute("""
+        UPDATE hats
+        SET quantity = quantity-1
+        WHERE id = ?
+        """, [available_id])
+
+        return available_id
+
+    def check_quantity(self, id):
+        cursor = self.connection.cursor()
+        cursor.execute("""
+        SELECT quantity FROM hats WHERE id = ?
+        """, [id])
+        quantity_left = cursor.fetchone()
+        if(quantity_left[0] == 0):
+            self.connection.execute("""
+            DELETE FROM hats
+            WHERE id = ?
+            """, [id])
+
+    def get_supplier_id(self, hat_id):
+        cursor = self.connection.cursor()
+        cursor.execute("""
+                SELECT supplier FROM hats WHERE id = ?
+                """, [hat_id])
+        supplier_id = cursor.fetchone()[0]
+        return supplier_id

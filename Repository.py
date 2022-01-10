@@ -4,11 +4,14 @@ import sqlite3
 from Hats import Hats
 from Orders import Orders
 from Suppliers import Suppliers
+import os
 
 
 class Repository:
 
     def __init__(self):
+        if os.path.exists('database.db'):
+            os.remove('database.db')
         self.connection = sqlite3.connect('database.db')
         self.hats = Hats(self.connection)
         self.suppliers = Suppliers(self.connection)
@@ -19,7 +22,6 @@ class Repository:
         self.connection.close()
 
     def create_tables(self):
-
         self.connection.executescript("""
         CREATE TABLE suppliers (
         id      INT   PRIMARY KEY,
